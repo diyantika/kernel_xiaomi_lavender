@@ -2,15 +2,27 @@ version: 2.1
 jobs:
   compile:
    docker:
-      - image: z4nyx/docker:latest
+      - image: nexgang/ubuntu:latest
    steps:
       - run:
+         command: |
+           sudo apt-get update
+           sudo apt-get install -y bc build-essential gcc-arm-linux-gnueabi gcc-aarch64-linux-gnu 
+
+      - run:
           command: |
-           git config --global user.name "sohamxda7"
-           git config --global user.email "sensoham135@gmail.com"
+           git config --global user.name "diyantika"
+           git config --global user.email "ns.nxnx77777@gmail.com"
            git config --global color.ui false
            git clone --depth=1 https://github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME} -b ${CIRCLE_BRANCH} .
-           bash .circleci/build.sh
+           bash compile-gc.sh
+
+      - run:
+          name: Upload to Pixeldrain
+          command: |
+           curl -T "out/outputs/dipper/NSE/Image.gz-dtb" -u "${PIXELDRAIN_API_KEY}" https://pixeldrain.com/api/file/
+           curl -T "zone_dipper/dipper.zip" -u "${PIXELDRAIN_API_KEY}" https://pixeldrain.com/api/file/
+
 workflows:
   version: 2.1
   cooking:
